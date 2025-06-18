@@ -63,8 +63,9 @@ def translate_chapters(api_key: str,
     
         if verbosity >= 2: print(f"=== Processing Chapter {idx}: {filename} ===")
     
-        # Only retrieve HTML if it does not already exist
         if verbosity >= 2: print(f"1. Retrieving chapter {idx} HTML content...", end=' ')
+        
+        # Only retrieve HTML if it does not already exist
         html = None
         if not os.path.exists(path_to_raw_html):
             rate_limit_flag = True
@@ -77,30 +78,32 @@ def translate_chapters(api_key: str,
         else:
             with open(path_to_raw_html, "r", encoding="utf-8") as file:
                 html = file.read()
+        
         if verbosity >= 2: print("Done.")
                 
-        # Only parse and translate if raw content does not already exist
         if verbosity >= 2: print(f"2. Parsing chapter {idx} content from HTML...", end=' ')
-        title, text = None, None
+        
+        # Only parse and translate if raw content does not already exist
+        content = ""
         if not os.path.exists(path_to_raw_content):
-            title, text = parse_html(html)
-            if not (title and text):
+            content = parse_html(html)
+            if not content:
                 return "Failed to parse HTML content."
             
             with open(path_to_raw_content, "w", encoding="utf-8") as file:
-                file.write(f"{title}\n\n{text}")
+                file.write(content)
         else:
             with open(path_to_raw_content, "r", encoding="utf-8") as file:
-                lines = file.readlines()
-                title = lines[0].strip()
-                text = ''.join(lines[2:]).strip()
+                content = file.read()
+        
         if verbosity >= 2: print("Done.")
                 
-        # Only translate if translation does not already exist
         if verbosity >= 2: print(f"3. Translating chapter {idx} content...", end=' ')
+        
+        # Only translate if translation does not already exist
         if not os.path.exists(path_to_translation):
             rate_limit_flag = True
-            translated_text = client.translate_chapter(title, text)
+            translated_text = client.translate_chapter(content)
 
             with open(path_to_translation, "w", encoding="utf-8") as file:
                 file.write(translated_text)

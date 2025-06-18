@@ -22,8 +22,8 @@ def retrieve_html(url: str, headers: dict = {}) -> str:
     
     return response.text
 
-def parse_html(content: str) -> tuple[str,str]:
-    def extract_title(content: str) -> str:
+def parse_html(content: str) -> str | None:
+    def extract_title(content: str) -> str | None:
         soup = BeautifulSoup(content, 'html.parser')
         title_container = soup.find('h1', class_='p-novel__title p-novel__title--rensai')
         
@@ -31,10 +31,10 @@ def parse_html(content: str) -> tuple[str,str]:
             title = title_container.get_text(strip=True)
             return title
         else:
-            print("Title not found in the HTML content.")
-            return "Title not found"
+            print("ERROR: Title not found in the HTML content.")
+            return None
     
-    def extract_content(content: str) -> tuple[str, str]:
+    def extract_content(content: str) -> str | None:
         soup = BeautifulSoup(content, 'html.parser')
 
         container = soup.find('div', class_='js-novel-text p-novel__text')
@@ -64,6 +64,9 @@ def parse_html(content: str) -> tuple[str,str]:
 
             final_lines.append(text.strip())
 
-        return '\n'.join(final_lines)
+        return '\n'.join(final_lines) if final_lines else None
     
-    return extract_title(content), extract_content(content)
+    return "{title}\n\n{content}".format(
+        title=extract_title(content),
+        content=extract_content(content)
+    ) or None

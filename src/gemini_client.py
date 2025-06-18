@@ -18,13 +18,12 @@ class GeminiClient:
     def __init__(self, api_key: str):
         self.client = genai.Client(api_key=api_key)
 
-    def translate_chapter(self, title: str, content: str) -> str:
+    def translate_chapter(self, content: str) -> str:
         """
         Translate the chapter content to the target language using Google Gemini.
 
         Args:
-            title (str): The title of the chapter.
-            content (str): The content of the chapter.
+            content (str): The contents of the chapter.
 
         Returns:
             str: The translated content.
@@ -32,7 +31,7 @@ class GeminiClient:
         
         response = self.client.models.generate_content(
             model="gemini-2.0-flash",
-            contents=self.PROMPT_TEMPLATE.format(title=title, content=content)
+            contents=self.PROMPT_TEMPLATE.format(content=content)
         )
 
         return response.text if response.text else "Translation failed."
