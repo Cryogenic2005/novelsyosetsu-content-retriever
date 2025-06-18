@@ -9,7 +9,7 @@ class GeminiClient:
     - Do NOT include any non-English text in the output.
     - Do NOT add explanations or commentary.
     - Maintain the paragraph structure (one paragraph per line).
-    - Return only the translated text in markdown format.
+    - Return only the translated text without any additional formatting or metadata.
     
     Here is the chapter content to translate:
     {content}
