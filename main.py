@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Translate chapters of a Japanese web novel using Google Gemini.")
     parser.add_argument("novel_link", type=str, help="The link to the novel on ncode.syosetu.com")
     parser.add_argument("novel_name", type=str, help="The name of the novel (used for directory structure)")
-    parser.add_argument("--chapter_idxs", type=int, nargs='+', default=[1], 
+    parser.add_argument("--chapters", type=int, nargs='+', default=[1], 
                         help="List of chapter indices to translate (default: [1])")
     parser.add_argument("--cooldown_time", type=int, default=5,
                         help="Time in seconds to wait between requests to avoid rate limiting (default: 5)")
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     
     novel_link = args.novel_link
     novel_name = args.novel_name
-    chapter_idxs = args.chapter_idxs
+    chapters = args.chapters
     cooldown_time = args.cooldown_time
     verbosity = args.verbosity
     
@@ -35,11 +35,11 @@ if __name__ == "__main__":
         raise ValueError("Novel link must start with 'https://ncode.syosetu.com/'")
     
     # Ensure chapter indices are positive integers
-    if not all(isinstance(idx, int) and idx > 0 for idx in chapter_idxs):
+    if not all(isinstance(idx, int) and idx > 0 for idx in chapters):
         raise ValueError("Chapter indices must be positive integers.")
 
     # Translate chapters
     translate_chapters(api_key, novel_link, novel_name, 
-                       chapter_idxs=chapter_idxs,
+                       chapter_idxs=chapters,
                        cooldown_time=cooldown_time,
                        verbosity=verbosity)
