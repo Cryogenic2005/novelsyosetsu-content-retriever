@@ -7,10 +7,10 @@ from src.translator import translate_chapters
 if __name__ == "__main__":
     # Load environment variables
     load_dotenv()
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("GEMINI_API_KEY")
     
     if not api_key:
-        raise ValueError("API_KEY environment variable is not set.")
+        raise ValueError("GEMINI_API_KEY environment variable is not set.")
 
     # Argument parser setup
     parser = argparse.ArgumentParser(description="Translate chapters of a Japanese web novel using Google Gemini.")
