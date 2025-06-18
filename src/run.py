@@ -1,3 +1,4 @@
+import argparse
 import os
 from dotenv import load_dotenv
 
@@ -9,14 +10,18 @@ if __name__ == "__main__":
     load_dotenv(os.path.join(parent_dir, ".env"))
     api_key = os.getenv("GEMINI_API_KEY")
     
-    configs = {
-        "storage_path": os.path.join(os.path.dirname(os.path.dirname(__file__)), "chapters"),
-        "api_key": api_key,
-        "maximized": True,
-        "fullscreen": False,
-        "novel": "Shangri-La_Frontier",
-        "chapter": 615,
-    }
+    argparser = argparse.ArgumentParser(description="Run the novel translation application.")
+    argparser.add_argument("--novel", type=str, default=None, help="Name of the novel to read.")
+    argparser.add_argument("--chapter", type=int, default=None, help="Chapter number to read.")
+    args = argparser.parse_args()
+    
+    configs = {}
+    configs["api_key"] = api_key
+    configs["storage_path"] = os.path.join(parent_dir, "chapters")
+    configs["maximized"] = True
+    configs["fullscreen"] = False
+    if args.novel: configs["novel"] = args.novel
+    if args.chapter: configs["chapter"] = args.chapter
     
     app = App(**configs)
     app.run()
