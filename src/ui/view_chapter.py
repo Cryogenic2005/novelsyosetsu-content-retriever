@@ -13,8 +13,6 @@ class ViewChapterUI(tk.Frame):
         self.create_widgets()
 
     def load_chapter_content(self):
-        header_txt = f"{self.novel} Chapter {self.chapter}"
-        
         # Placeholder: Load chapter content from a file or database
         chapter_file_path = os.path.join(self.storage_path,
                                          self.novel,
@@ -30,14 +28,24 @@ class ViewChapterUI(tk.Frame):
         
         # Split the content into title and body
         if not content_txt:
-            return f"{header_txt}\n\nNo content available."
+            return f"No content available."
         
         title_txt = content_txt.split('\n')[0] if content_txt else "No Title"
         content_txt = content_txt[len(title_txt):].strip() if title_txt else content_txt
         
-        return f"{header_txt}\n{title_txt}\n\n{content_txt}"
+        return f"{title_txt}\n\n{content_txt}"
 
     def create_widgets(self):
+        # Create frame for chapter header
+        header_frame = tk.Frame(self)
+        header_frame.pack(fill=tk.X, padx=10, pady=5)
+        header_label = tk.Label(header_frame, text=f"{self.novel} - Chapter {self.chapter}",
+                                font=("Arial", 16, "bold"),
+                                bg="#0000ff", fg="#333")
+        header_label.pack(fill=tk.X, padx=10, pady=5)
+        header_label.config(bg="#0000ff", fg="#ffffff")  # Set background and foreground colors
+        
+        # Create a text widget to display the chapter content
         text_frame = tk.Frame(self)
         text_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
         self.text_widget = tk.Text(text_frame,
@@ -49,14 +57,11 @@ class ViewChapterUI(tk.Frame):
         self.text_widget.config(state=tk.DISABLED)  # Make the text widget read-only
         self.text_widget.pack(fill=tk.BOTH, expand=True)
         
-        # Add a header tag for the chapter title
-        self.text_widget.tag_configure("header", font=("Arial", 14, "bold"), foreground="#0000ff")
-        self.text_widget.tag_add("header", "1.0", "1.end")
-        
         # Add a title tag for the chapter title
         self.text_widget.tag_configure("title", font=("Arial", 12, "bold"), foreground="#000000")
-        self.text_widget.tag_add("title", "2.0", "2.end")
+        self.text_widget.tag_add("title", "1.0", "1.end")
         
+        # Create frame for navigation buttons
         nav_frame = tk.Frame(self)
         nav_frame.pack(pady=5)
         tk.Button(nav_frame, text="Previous", command=self.go_previous).pack(side=tk.LEFT, padx=5)
