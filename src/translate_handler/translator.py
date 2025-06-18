@@ -8,6 +8,7 @@ def translate_chapters(api_key: str,
                        novel_link: str,
                        novel_name: str,
                        chapter_idxs: list[int] = [1],
+                       storage_path: str = "chapters",
                        verbosity: int = 1,
                        cooldown_time: int = 5) -> None:
     """Translate chapters of a Japanese web novel using Google Gemini.
@@ -16,6 +17,7 @@ def translate_chapters(api_key: str,
     :param str novel_link: The link to the novel on ncode.syosetu.com.
     :param str novel_name: The name of the novel (used for directory structure).
     :param list[int] chapter_idxs: List of chapter indices to translate (default: [1]).
+    :param str storage_path: Path to store the raw HTML, raw content, and translations (default: "chapters").
     :param int verbosity: Verbosity level (0: silent, 1: basic info, 2: detailed info).
     :param int cooldown_time: Time in seconds to wait between requests to avoid rate limiting (default: 5).
     :raises ValueError: If the novel link does not start with 'https://ncode.syosetu.com/'.
@@ -29,9 +31,9 @@ def translate_chapters(api_key: str,
         raise ValueError("Novel link must start with 'https://ncode.syosetu.com/'")
     
     # Define paths for the files
-    raw_html_dir = f"chapters/{novel_name}/raw_html"
-    raw_content_dir = f"chapters/{novel_name}/raw_content"
-    translation_dir = f"chapters/{novel_name}/translation"
+    raw_html_dir = f"{storage_path}/{novel_name}/raw_html"
+    raw_content_dir = f"{storage_path}/{novel_name}/raw_content"
+    translation_dir = f"{storage_path}/{novel_name}/translation"
 
     # Ensure directories exist
     os.makedirs(raw_html_dir, exist_ok=True)
