@@ -48,6 +48,8 @@ def translate_chapters(api_key: str,
     client = GeminiClient(api_key)
     
     for idx in chapter_idxs:
+        start_time = time.time()
+        
         # Only set to True whenever a call is made to the Gemini API
         # OR a GET request is made to the novel link
         # This is to avoid rate limiting issues
@@ -102,9 +104,14 @@ def translate_chapters(api_key: str,
 
             with open(path_to_translation, "w", encoding="utf-8") as file:
                 file.write(translated_text)
+        
+        end_time = time.time()
+        elapsed_time = end_time - start_time
+        
         if verbosity >= 2: print("Done.")
-                
-        if verbosity >= 1: print(f"=== Chapter {idx} processed successfully: {filename} ===\n")
+        
+        if verbosity >= 1: print("Chapter {} processed successfully in {:.2f} seconds: \n\t'{}'\n"
+                                 .format(idx, elapsed_time, path_to_translation))
         
         # Wait 'cooldown_time' seconds before the next request to avoid rate limiting
         # But skip if this is the last chapter
