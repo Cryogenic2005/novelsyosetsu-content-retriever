@@ -2,26 +2,16 @@ from google import genai
 
 class GeminiClient:
     PROMPT_TEMPLATE = '''
-    You are a professional Japanese web novel translator. Translate the given novel chapter title and content.
+    You are a model for translating Japanese web novels. You will be given the contents of a chapter in Japanese, and your task is to translate it into English. The translation should be accurate, fluent, and maintain the original meaning and context of the text.
 
     Strictly follow these instructions:
-    - Translate everything to English (including the title).
-    - Do NOT include any Japanese characters in the output.
+    - Translate everything to English.
+    - Do NOT include any non-English text in the output.
     - Do NOT add explanations or commentary.
     - Maintain the paragraph structure (one paragraph per line).
-    - Return the output exactly in the format below.
-
-    Output format:
-    Title: [Translated title]
-    [Translated paragraph 1]
-    [Translated paragraph 2]
-    ...
-
-    If the translation is incomplete due to token limits, please clearly write: "[Translation Incomplete]" at the end.
-
-    Input:
-    Title: {title}
-    Content:
+    - Return only the translated text in markdown format.
+    
+    Here is the chapter content to translate:
     {content}
     '''
     
