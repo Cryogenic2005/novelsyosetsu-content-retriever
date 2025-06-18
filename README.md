@@ -31,18 +31,21 @@ A Python tool to retrieve and translate chapters from Japanese web novels hosted
 ## Usage
 Run the script from the command line:
 ```sh
-python main.py <novel_link> <novel_name> [--chapters 1 2 3 ...] [--cooldown_time 5] [--verbosity 1]
+python main.py --novel_link <novel_link> --novel_name <novel_name> \
+    [--chapters 1 2 3 ...] \
+    [--cooldown_time 5] \
+    [--verbosity 1]
 ```
 
-- `<novel_link>`: URL to the novel on ncode.syosetu.com (e.g., `https://ncode.syosetu.com/examplenovelid/`)
-- `<novel_name>`: Name for the novel (used for directory structure)
+- `--novel_link`: URL to the novel on ncode.syosetu.com (e.g., `https://ncode.syosetu.com/examplenovelid/`) (**required**)
+- `--novel_name`: Name for the novel (used for directory structure) (**required**)
 - `--chapters`: List of chapter indices to translate (default: `[1]`)
 - `--cooldown_time`: Seconds to wait between requests (default: `5`)
 - `--verbosity`: Logging level (0: silent, 1: basic info, 2: detailed info)
 
 ### Example
 ```sh
-python main.py https://ncode.syosetu.com/examplenovelid/ "Example Novel" --chapters 1 2 3 --cooldown_time 10 --verbosity 2
+python main.py --novel_link https://ncode.syosetu.com/examplenovelid/ --novel_name "Example Novel" --chapters 1 2 3 --cooldown_time 10 --verbosity 2
 ```
 
 ## Directory Structure
@@ -58,3 +61,6 @@ src/
   translator.py            # Manages translation workflow
 main.py                    # Entry point for CLI usage
 ```
+
+## License
+MIT License

@@ -14,12 +14,14 @@ if __name__ == "__main__":
 
     # Argument parser setup
     parser = argparse.ArgumentParser(description="Translate chapters of a Japanese web novel using Google Gemini.")
-    parser.add_argument("novel_link", type=str, help="The link to the novel on ncode.syosetu.com")
-    parser.add_argument("novel_name", type=str, help="The name of the novel (used for directory structure)")
+    parser.add_argument("--novel_link", type=str, required=True,
+                        help="The link to the novel on ncode.syosetu.com")
+    parser.add_argument("--novel_name", type=str, required=True,
+                        help="The name of the novel (used for directory structure)")
     parser.add_argument("--chapters", type=int, nargs='+', default=[1], 
                         help="List of chapter indices to translate (default: [1])")
     parser.add_argument("--cooldown_time", type=int, default=5,
-                        help="Time in seconds to wait between requests to avoid rate limiting (default: 5)")
+                        help="Time in seconds to wait between requests (default: 5)")
     parser.add_argument("--verbosity", type=int, default=1,
                         help="Verbosity level (0: silent, 1: basic info, 2: detailed info)")
     args = parser.parse_args()
