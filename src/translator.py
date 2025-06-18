@@ -1,8 +1,8 @@
 import os
 import time
 
-from retriever import retrieve_html, parse_html
-from gemini_client import GeminiClient
+from .retriever import retrieve_html, parse_html
+from .gemini_client import GeminiClient
 
 def translate_chapters(api_key: str,
                        novel_link: str,
