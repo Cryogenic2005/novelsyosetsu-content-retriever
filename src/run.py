@@ -10,7 +10,10 @@ if __name__ == "__main__":
     configs = {
         "storage_path": os.path.join(os.path.dirname(os.path.dirname(__file__)), "chapters"),
         "api_key": api_key,
-        "fullscreen": True,
+        "maximized": True,
+        "fullscreen": False,
+        "novel": None,
+        "chapter": None,
     }
     
     app = App(**configs)

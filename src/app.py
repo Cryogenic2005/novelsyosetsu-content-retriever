@@ -1,6 +1,8 @@
 import tkinter as tk
 
 from ui import SelectNovelsUI
+from ui import SelectChaptersUI
+from ui import ViewChapterUI
 
 class App:
     def __init__(self, **kwargs):
@@ -11,6 +13,9 @@ class App:
         self.root.geometry("800x600")
         self.root.minsize(800, 600)
         
+        if kwargs.get("maximized", False):
+            self.root.state("zoomed")
+        
         if kwargs.get("fullscreen", False):
             self.root.attributes("-fullscreen", True)
             
@@ -18,7 +23,13 @@ class App:
                                                                not self.root.attributes("-fullscreen")))
         
         self.current_frame: tk.Frame = None
-        self.show_frame(SelectNovelsUI, **kwargs)
+        
+        if not kwargs.get("novel", None):
+            self.show_frame(SelectNovelsUI, **kwargs)
+        elif not kwargs.get("chapter", None):
+            self.show_frame(SelectChaptersUI, **kwargs)
+        else:
+            self.show_frame(ViewChapterUI, **kwargs)
 
     def show_frame(self, frame_class: type[tk.Frame], **kwargs):
         if self.current_frame is not None:
