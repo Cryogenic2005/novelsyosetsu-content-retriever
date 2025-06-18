@@ -8,12 +8,14 @@ __pycache__/
 .env
 
 # Python virtual environment
-venv/
+.venv/
 
 # Ignore everything inside the 'chapters/' directory
 # but keep the .gitkeep file to ensure the directory is tracked
 chapters/
 !chapters/.gitkeep
 
-# Ignore Shell scripts
+# Ignore Shell, Bash, and other script files
 *.sh
+*.bat
+*.ps1
