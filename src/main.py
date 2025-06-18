@@ -2,7 +2,7 @@ import argparse
 import os
 from dotenv import load_dotenv
 
-from src.translate_handler import translate_chapters
+from translate_handler import translate_chapters
 
 if __name__ == "__main__":
     # Load environment variables
