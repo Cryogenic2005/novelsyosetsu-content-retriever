@@ -1,0 +1,16 @@
+# Python bytecode files
+__pycache__/
+
+# VS Code specific settings
+.vscode/
+
+# Environment variables file
+.env
+
+# Python virtual environment
+venv/
+
+# Ignore everything inside the 'chapters/' directory
+# but keep the .gitkeep file to ensure the directory is tracked
+chapters/
+!chapters/.gitkeep
