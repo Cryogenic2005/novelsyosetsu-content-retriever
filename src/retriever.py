@@ -20,10 +20,6 @@ def retrieve_html(url: str, headers: dict = {}) -> str:
         print(f"Error retrieving {url}: {e}")
         return None    
     
-    # Save the HTML content to a file
-    with open('retrieved_page.html', 'w', encoding='utf-8') as file:
-        file.write(response.text)
-        
     return response.text
 
 def parse_html(content: str) -> tuple[str,str]:
