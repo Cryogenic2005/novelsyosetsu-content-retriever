@@ -73,8 +73,7 @@ class SelectChaptersUI(tk.Frame):
         self.listbox.pack(pady=5)
         tk.Button(self, text="View Chapter", command=self.view_chapter).pack(pady=5)
         
-        tk.Label(self, text="Enter chapter numbers to translate, separate multiple chapters with spaces, \
-            use dashes for ranges (e.g., 1 2 3 or 1-5):").pack(pady=5)
+        tk.Label(self, text="Enter chapter numbers to translate. Use dashes for ranges (e.g., 1 2 4-6):").pack(pady=5)
         self.chapter_entry = tk.Entry(self, width=30)
         self.chapter_entry.pack(pady=2)
         tk.Button(self, text="Translate Chapters", command=self.translate_chapters).pack(pady=5)
