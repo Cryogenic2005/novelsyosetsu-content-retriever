@@ -64,13 +64,26 @@ class SelectChaptersUI(tk.Frame):
                 
     def create_widgets(self):
         tk.Label(self, text=f"Novel: {self.novel}", font=("Arial", 16)).pack(pady=10)
-        
         tk.Label(self, text="Chapters:").pack()
-        self.listbox = tk.Listbox(self)
+        
+        # Create a frame for the listbox and scrollbar
+        view_chapters_frame = tk.Frame(self)
+        view_chapters_frame.pack(pady=5)
+        
+        # Create a vertical scrollbar
+        scrollbar = tk.Scrollbar(view_chapters_frame, orient=tk.VERTICAL)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Create a listbox to display chapters
+        self.listbox = tk.Listbox(view_chapters_frame, yscrollcommand=scrollbar.set, height=10)
+        self.listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         for idx in self.chapters:
             label = f"Chapter {idx}"
             self.listbox.insert(tk.END, label)
-        self.listbox.pack(pady=5)
+        
+        # Add scrollbar to the listbox
+        scrollbar.config(command=self.listbox.yview)
+        
         tk.Button(self, text="View Chapter", command=self.view_chapter).pack(pady=5)
         
         tk.Label(self, text="Enter chapter numbers to translate. Use dashes for ranges (e.g., 1 2 4-6):").pack(pady=5)
