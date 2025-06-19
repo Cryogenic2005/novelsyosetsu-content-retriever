@@ -2,7 +2,8 @@ import csv
 import os
 import re
 import tkinter as tk
-
+import asyncio
+from threading import Thread
 from translate_handler import translate_chapters
 
 class SelectChaptersUI(tk.Frame):
@@ -16,7 +17,7 @@ class SelectChaptersUI(tk.Frame):
             raise ValueError("Storage path must be provided in kwargs.")
         
         self.storage_path = kwargs['storage_path']
-        self.api_key = kwargs.get('api_key', None)
+        self.api_key = kwargs.get('api_key', os.getenv('GEMINI_API_KEY', ''))
         
         self.chapters = self.get_chapters()
         self.create_widgets()
@@ -106,18 +107,27 @@ class SelectChaptersUI(tk.Frame):
             tk.messagebox.showerror("Error", "API key is required for translation.")
             return
         
-        result = translate_chapters(
-            novel_link=self.novel_link,
-            novel_name=self.novel,
-            chapter_idxs=chapter_idxs,
-            api_key=self.api_key,
-            storage_path=self.storage_path
+        # Run the async translation in a background thread to avoid blocking the UI
+        def run_async_translation():
+            asyncio.run(translate_chapters(
+                novel_link=self.novel_link,
+                novel_name=self.novel,
+                chapter_idxs=chapter_idxs,
+                api_key=self.api_key,
+                storage_path=self.storage_path
+            ))
+            self.after(0, self.on_translation_complete)
+        Thread(target=run_async_translation, daemon=True).start()
+        tk.messagebox.showinfo("Info", "Translation started. This may take a while. You will be notified when it finishes.")
+    
+    def on_translation_complete(self):
+        tk.messagebox.showinfo("Info", "Translation completed successfully.")
+        self.app.show_frame(
+            __import__('ui.select_chapters', fromlist=['SelectChaptersUI']).SelectChaptersUI,
+            novel=self.novel,
+            storage_path=self.storage_path,
+            api_key=self.api_key
         )
-        
-        if result:
-            tk.messagebox.showinfo("Translation Result", result)
-        else:
-            tk.messagebox.showinfo("Translation Result", "Chapters translated successfully!")
 
     def go_back(self):
         self.app.show_frame(
