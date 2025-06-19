@@ -59,7 +59,7 @@ class SelectChaptersUI(tk.Frame):
                 chapters.append(chapter_number)
                 
         # Sort chapters in ascending order
-        chapters.sort()
+        chapters.sort(reverse=True)
         return chapters
                 
     def create_widgets(self):
