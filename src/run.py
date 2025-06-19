@@ -11,8 +11,8 @@ if __name__ == "__main__":
     api_key = os.getenv("GEMINI_API_KEY")
     
     argparser = argparse.ArgumentParser(description="Run the novel translation application.")
-    argparser.add_argument("--novel", type=str, default=None, help="Name of the novel to read.")
-    argparser.add_argument("--chapter", type=int, default=None, help="Chapter number to read.")
+    argparser.add_argument("-n", "--novel", type=str, default=None, help="Name of the novel to read.")
+    argparser.add_argument("-c", "--chapter", type=int, default=None, help="Chapter number to read.")
     args = argparser.parse_args()
     
     configs = {}
