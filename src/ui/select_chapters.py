@@ -73,7 +73,8 @@ class SelectChaptersUI(tk.Frame):
         self.listbox.pack(pady=5)
         tk.Button(self, text="View Chapter", command=self.view_chapter).pack(pady=5)
         
-        tk.Label(self, text="Enter chapter numbers to translate (space separated):").pack()
+        tk.Label(self, text="Enter chapter numbers to translate, separate multiple chapters with spaces, \
+            use dashes for ranges (e.g., 1 2 3 or 1-5):").pack(pady=5)
         self.chapter_entry = tk.Entry(self, width=30)
         self.chapter_entry.pack(pady=2)
         tk.Button(self, text="Translate Chapters", command=self.translate_chapters).pack(pady=5)
@@ -97,11 +98,24 @@ class SelectChaptersUI(tk.Frame):
             tk.messagebox.showerror("Error", "Please enter chapter numbers to translate.")
             return
         
-        try:
-            chapter_idxs = list(map(int, chapter_input.split()))
-        except ValueError:
-            tk.messagebox.showerror("Error", "Invalid chapter numbers. Please enter integers separated by spaces.")
-            return
+        # Parse chapter input
+        chapter_idxs = []
+        for part in chapter_input.split():
+            if '-' in part:
+                # Handle range like 1-5
+                try:
+                    start, end = map(int, part.split('-'))
+                    chapter_idxs.extend(range(start, end + 1))
+                except ValueError:
+                    tk.messagebox.showerror("Error", f"Invalid range format: {part}")
+                    return
+            else:
+                # Handle single chapter number
+                try:
+                    chapter_idxs.append(int(part))
+                except ValueError:
+                    tk.messagebox.showerror("Error", f"Invalid chapter number: {part}")
+                    return
         
         if not self.api_key:
             tk.messagebox.showerror("Error", "API key is required for translation.")
