@@ -94,13 +94,21 @@ class ViewChapterUI(tk.Frame):
         tk.Button(self, text="Back", command=self.go_back).pack(pady=10)
         
     def add_key_bindings(self):
-        # Bind keys for navigation
-        self.master.bind("<Left>", lambda e: self.go_previous())
-        self.master.bind("<Right>", lambda e: self.go_next())
-        self.master.bind("<Escape>", lambda e: self.go_back())
+        # Bind keys for navigation to the frame
+        self.bind("<Left>", lambda e: self.go_previous())
+        self.bind("<Right>", lambda e: self.go_next())
+        self.bind("<Escape>", lambda e: self.go_back())
         
+        # Bind keys for scrolling to the frame
+        self.bind("<Up>", lambda e: self.text_widget.yview_scroll(-1, "units"))
+        self.bind("<Down>", lambda e: self.text_widget.yview_scroll(1, "units"))
+        
+        # Hotkey for translation request
         if not self.translated:
-            self.master.bind("<Return>", lambda e: self.request_translation())
+            self.bind("<Return>", lambda e: self.request_translation())
+
+        # Ensure the frame has focus to receive key events
+        self.focus_set()
         
     def request_translation(self):
         if self.is_translating:
