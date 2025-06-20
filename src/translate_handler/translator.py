@@ -73,7 +73,7 @@ async def translate_chapters(api_key: str,
             rate_limit_flag = True
             html = await asyncio.to_thread(retrieve_html, f"{novel_link}/{idx}", headers=headers)
             if not html:
-                print("Failed to retrieve HTML content.")
+                if verbosity >= 1: print("Failed to retrieve HTML content.")
                 return
             with open(path_to_raw_html, "w", encoding="utf-8") as file:
                 file.write(html)
@@ -103,6 +103,11 @@ async def translate_chapters(api_key: str,
         if not os.path.exists(path_to_translation):
             rate_limit_flag = True
             translated_text = await asyncio.to_thread(client.translate_chapter, content)
+                
+            if not translated_text:
+                if verbosity >= 1: print("Translation failed for chapter {}. Skipping...".format(idx))
+                continue
+            
             with open(path_to_translation, "w", encoding="utf-8") as file:
                 file.write(translated_text)
                 
