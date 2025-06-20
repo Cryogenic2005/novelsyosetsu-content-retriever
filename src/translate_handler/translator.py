@@ -2,7 +2,7 @@ import os
 import time
 import asyncio
 
-from .retriever import retrieve_html, parse_html
+from .scraper import retrieve_html, parse_html
 from .gemini_client import GeminiClient
 
 async def translate_chapters(api_key: str,
