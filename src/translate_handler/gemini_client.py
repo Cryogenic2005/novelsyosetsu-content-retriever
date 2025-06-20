@@ -1,7 +1,9 @@
 from google import genai
+from google.genai import types
+from google.genai.types import HarmCategory, HarmBlockThreshold, SafetySetting
 
 class GeminiClient:
-    PROMPT_TEMPLATE = '''
+    SYSTEM_INSTRUCTION = '''
     You are a model for translating Japanese web novels. You will be given the contents of a chapter in Japanese, and your task is to translate it into English. The translation should be accurate, fluent, and maintain the original meaning and context of the text.
 
     Strictly follow these instructions:
@@ -10,10 +12,30 @@ class GeminiClient:
     - Do NOT include any additional explanations or comments in the output.
     - Maintain the paragraph structure (one paragraph per line).
     - Return only the translated text without any additional formatting or metadata.
+    '''
     
-    Here is the chapter content to translate:
+    PROMPT_TEMPLATE = '''Here is the chapter content to translate:
     {content}
     '''
+    
+    SAFETY_SETTINGS = [
+        SafetySetting(
+            category=HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+            threshold=HarmBlockThreshold.BLOCK_NONE
+        ),
+        SafetySetting(
+            category=HarmCategory.HARM_CATEGORY_HARASSMENT,
+            threshold=HarmBlockThreshold.BLOCK_NONE
+        ),
+        SafetySetting(
+            category=HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+            threshold=HarmBlockThreshold.BLOCK_NONE
+        ),
+        SafetySetting(
+            category=HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+            threshold=HarmBlockThreshold.BLOCK_NONE
+        )
+    ]
     
     def __init__(self, api_key: str):
         self.client = genai.Client(api_key=api_key)
@@ -31,7 +53,19 @@ class GeminiClient:
         
         response = self.client.models.generate_content(
             model="gemini-2.5-flash",
-            contents=self.PROMPT_TEMPLATE.format(content=content)
+            contents=self.PROMPT_TEMPLATE.format(content=content),
+            config=types.GenerateContentConfig(
+                system_instruction=self.SYSTEM_INSTRUCTION,
+                safety_settings=self.SAFETY_SETTINGS
+            )
         )
+        
+        if not response:
+            print("No response received from Gemini translation.")
+            return None
+        
+        if not response.text:
+            print(f"No text returned from Gemini translation. Response: {response}")
+            return None
 
-        return response.text if response.text else "Translation failed."
+        return response.text
