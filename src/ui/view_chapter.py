@@ -90,8 +90,8 @@ class ViewChapterUI(tk.Frame):
         nav_frame = tk.Frame(self)
         nav_frame.pack(pady=5)
         tk.Button(nav_frame, text="Previous", command=self.go_previous).pack(side=tk.LEFT, padx=5)
+        tk.Button(nav_frame, text="Back", command=self.go_back).pack(side=tk.LEFT, padx=5)
         tk.Button(nav_frame, text="Next", command=self.go_next).pack(side=tk.LEFT, padx=5)
-        tk.Button(self, text="Back", command=self.go_back).pack(pady=10)
         
     def add_key_bindings(self):
         # Bind keys for navigation to the frame
