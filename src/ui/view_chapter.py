@@ -129,7 +129,7 @@ class ViewChapterUI(tk.Frame):
             
             for row in reader:
                 if row[0].strip() == self.novel:
-                    link = row[1].strip()
+                    link = row[1].strip().strip('\"')
                     break
             else:
                 tk.messagebox.showerror("Error", f"Novel '{self.novel}' not found in the catalog.")
