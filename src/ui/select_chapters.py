@@ -35,7 +35,7 @@ class SelectChaptersUI(tk.Frame):
             
             for row in reader:
                 if row[0].strip() == self.novel:
-                    self.novel_link = row[1].strip()
+                    self.novel_link = row[1].strip().strip('\"')
                     break
             else:
                 raise ValueError(f"Novel '{self.novel}' not found in the catalog.")
