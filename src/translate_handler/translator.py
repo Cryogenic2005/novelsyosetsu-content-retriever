@@ -33,8 +33,8 @@ async def translate_chapters(api_key: str,
     
     # Clean novel link
     novel_link = novel_link.rstrip('/')
-    if not novel_link.startswith('https://ncode.syosetu.com/'):
-        raise ValueError("Novel link must start with 'https://ncode.syosetu.com/'")
+    if not novel_link.startswith('https://ncode.syosetu.com'):
+        raise ValueError(f"Novel link must start with 'https://ncode.syosetu.com'. Provided: {novel_link}")
 
     # Define paths for the files
     raw_html_dir = f"{storage_path}/{novel_name}/raw_html"
