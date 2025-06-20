@@ -19,17 +19,17 @@ if __name__ == "__main__":
 
     # Argument parser setup
     parser = argparse.ArgumentParser(description="Translate chapters of a Japanese web novel using Google Gemini.")
-    parser.add_argument("--novel_name", type=str, required=True,
+    parser.add_argument("-n","--novel_name", type=str, required=True,
                         help="The name of the novel (used for directory structure)")
-    parser.add_argument("--novel_link", type=str, default=None,
+    parser.add_argument("-l", "--novel_link", type=str, default=None,
                         help="The link to the novel on ncode.syosetu.com. If not provided, the script will look for the novel with the given name in the storage catalog.")
-    parser.add_argument("--chapters", type=int, nargs='+', default=[1], 
+    parser.add_argument("-c", "--chapters", type=int, nargs='+', default=[1], 
                         help="List of chapter indices to translate (default: [1])")
-    parser.add_argument("--cooldown_time", type=int, default=5,
+    parser.add_argument("-t", "--cooldown_time", type=int, default=5,
                         help="Time in seconds to wait between requests (default: 5)")
-    parser.add_argument("--storage_path", type=str, default=None,
+    parser.add_argument("-p", "--storage_path", type=str, default=None,
                         help="Path to the storage directory where novel data is stored (default: '../chapters')")
-    parser.add_argument("--verbosity", type=int, default=1,
+    parser.add_argument("-v", "--verbosity", type=int, default=1,
                         help="Verbosity level (0: silent, 1: basic info, 2: detailed info)")
     args = parser.parse_args()
     
