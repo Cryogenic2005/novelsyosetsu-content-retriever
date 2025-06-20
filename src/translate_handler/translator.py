@@ -2,8 +2,13 @@ import os
 import time
 import asyncio
 
-from .scraper import retrieve_html, parse_html
+from .scraper import scrape_chapter
 from .gemini_client import GeminiClient
+
+_REQUEST_HEADERS = {
+    'User-Agent': 'Mozilla/5.0',
+    'Referer': 'https://ncode.syosetu.com/',
+}
 
 async def translate_chapters(api_key: str,
                              novel_link: str,
@@ -40,86 +45,88 @@ async def translate_chapters(api_key: str,
     os.makedirs(raw_html_dir, exist_ok=True)
     os.makedirs(raw_content_dir, exist_ok=True)
     os.makedirs(translation_dir, exist_ok=True)
-
-    # Headers for the HTTP request
-    headers = {
-        'User-Agent': 'Mozilla/5.0',
-        'Referer': 'https://ncode.syosetu.com/',
-    }
     
     # Initialize the Gemini client
     client = GeminiClient(api_key)
 
     for idx in chapter_idxs:
+        if verbosity >= 2: print(f"=== Processing Chapter {idx} ===")        
+        
         start_time = time.time()
-        
-        # Only set to True whenever a call is made to the Gemini API
-        # OR a GET request is made to the novel link
-        # This is to avoid rate limiting issues
-        rate_limit_flag = False
-        
-        # Construct file paths
-        filename = f"Chapter_{idx}"
-        path_to_raw_html = os.path.join(raw_html_dir, f"{filename}.html")
-        path_to_raw_content = os.path.join(raw_content_dir, f"{filename}.txt")
-        path_to_translation = os.path.join(translation_dir, f"{filename}_translated.txt")
-
-        if verbosity >= 2: print(f"=== Processing Chapter {idx}: {filename} ===")
-        if verbosity >= 2: print(f"1. Retrieving chapter {idx} HTML content...", end=' ')
-        
-        # Only retrieve HTML if it does not already exist
-        html = None
-        if not os.path.exists(path_to_raw_html):
-            rate_limit_flag = True
-            html = await asyncio.to_thread(retrieve_html, f"{novel_link}/{idx}", headers=headers)
-            if not html:
-                if verbosity >= 1: print("Failed to retrieve HTML content.")
-                return
-            with open(path_to_raw_html, "w", encoding="utf-8") as file:
-                file.write(html)
-        else:
-            with open(path_to_raw_html, "r", encoding="utf-8") as file:
-                html = file.read()
-                
-        if verbosity >= 2: print("Done.")
-
-        if verbosity >= 2: print(f"2. Parsing chapter {idx} content from HTML...", end=' ')
-        
-        content = ""
-        if not os.path.exists(path_to_raw_content):
-            content = parse_html(html)
-            if not content:
-                print("Failed to parse HTML content.")
-                return
-            with open(path_to_raw_content, "w", encoding="utf-8") as file:
-                file.write(content)
-        else:
-            with open(path_to_raw_content, "r", encoding="utf-8") as file:
-                content = file.read()
-        if verbosity >= 2: print("Done.")
-
-        if verbosity >= 2: print(f"3. Translating chapter {idx} content...", end=' ')
-        
-        if not os.path.exists(path_to_translation):
-            rate_limit_flag = True
-            translated_text = await asyncio.to_thread(client.translate_chapter, content)
-                
-            if not translated_text:
-                if verbosity >= 1: print("Translation failed for chapter {}. Skipping...".format(idx))
-                continue
-            
-            with open(path_to_translation, "w", encoding="utf-8") as file:
-                file.write(translated_text)
-                
+        status = await _translate_chapter(client,
+                                          novel_link=novel_link,
+                                          idx=idx,
+                                          raw_html_dir=raw_html_dir,
+                                          raw_content_dir=raw_content_dir,
+                                          translation_dir=translation_dir,
+                                          verbosity=verbosity)
         end_time = time.time()
         elapsed_time = end_time - start_time
         
         if verbosity >= 2: print("Done.")
-        if verbosity >= 1: print("Chapter {} processed successfully in {:.2f} seconds: \n\t'{}'\n"
-                                 .format(idx, elapsed_time, path_to_translation))
+        if verbosity >= 1: print(f"Chapter {idx} processed successfully in {elapsed_time:.2f} seconds")
         
-        # Wait 'cooldown_time' seconds before the next request to avoid rate limiting
+        if status is None:
+            continue  # Skip if translation already exists
+        
+        # Wait 'cooldown_time' seconds to avoid rate limiting
         # But skip if this is the last chapter
-        if idx != chapter_idxs[-1] and rate_limit_flag:
-            if verbosity >= 2: print(f"*** Waiting for {cooldown_time} seconds before the next request... ***\n")
+        if idx != chapter_idxs[-1]:
+            if verbosity >= 2: print(f"Waiting for {cooldown_time} seconds before the next request...\n")
             await asyncio.sleep(cooldown_time)
+            
+async def _translate_chapter(client: GeminiClient,
+                             novel_link: str,
+                             idx: int,
+                             raw_html_dir: str,
+                             raw_content_dir: str,
+                             translation_dir: str,
+                             verbosity: int = 1) -> bool | None:
+    """
+    Translate a single chapter of a Japanese web novel using Google Gemini.
+    
+    :param client: Instance of GeminiClient for translation.
+    :param novel_link: The link to the novel on ncode.syosetu.com.
+    :param idx: Chapter index to translate.
+    :param raw_html_dir: Directory to save raw HTML files.
+    :param raw_content_dir: Directory to save raw content files.
+    :param translation_dir: Directory to save translated files.
+    :param verbosity: Verbosity level (0: silent, 1: basic info, 2: detailed info).
+    :return: True if translation was successful, False if it failed, None if translation already exists.
+    """
+    
+    # Construct file paths
+    url = f"{novel_link}/{idx}/"
+    filename = f"Chapter_{idx}"
+    path_to_raw_html = os.path.join(raw_html_dir, f"{filename}.html")
+    path_to_raw_content = os.path.join(raw_content_dir, f"{filename}.txt")
+    path_to_translation = os.path.join(translation_dir, f"{filename}_translated.txt")
+    
+    # Check if the translation already exists
+    if os.path.exists(path_to_translation):
+        if verbosity >= 1: print(f"Translation for chapter {idx} already exists. Skipping...")
+        return None
+    
+    # Step 1: Scrape the chapter HTML content
+    if verbosity >= 2: print(f"1. Scraping chapter {idx} HTML content...", end=' ')
+    content = await asyncio.to_thread(scrape_chapter, url, _REQUEST_HEADERS,
+                                      verbosity=verbosity-1,
+                                      html_save_dir=path_to_raw_html,
+                                      content_save_dir=path_to_raw_content)
+    
+    if not content:
+        if verbosity >= 1: print(f"Failed to retrieve or parse HTML content for chapter {idx}. Skipping...")
+        return False
+    
+    if verbosity >= 2: print("Done.")
+    if verbosity >= 2: print(f"3. Translating chapter {idx} content...", end=' ')
+    
+    translated_text = await asyncio.to_thread(client.translate_chapter, content)        
+    if not translated_text:
+        if verbosity >= 1: print(f"Translation failed for chapter {idx}.")
+        return False
+    
+    with open(path_to_translation, "w", encoding="utf-8") as file:
+        file.write(translated_text)
+    
+    return True
