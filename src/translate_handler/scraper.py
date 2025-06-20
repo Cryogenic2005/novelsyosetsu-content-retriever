@@ -64,17 +64,11 @@ def _parse_html(content: str, save_dir: str = None) -> str | None:
         # Remove remaining tags like <p>, </p>
         text = re.sub(r'<[^>]+>', '', html)
         
-        if text:
-            content += text.strip() + '\n'
-        else:
-            content = None
-            break
+        content += text.strip() + '\n'
+         
+    content = content.strip()
     
-    parsed_text = "{title}\n\n{content}".format(
-        title=title,
-        content=content.strip() if content else ''
-    ) if (title and content) else None
-    
+    parsed_text = f"{title}\n\n{content}" if (title and content) else None
     if not parsed_text:
         print("ERROR: Failed to parse HTML content.")
         return None
@@ -99,7 +93,7 @@ def scrape_chapter(url, headers: dict = {}, verbosity: int = 1, **kwargs) -> str
     """
     
     if verbosity >= 2: print(f"Scraping chapter from {url}...")
-    
+        
     html_content = _scrape_html(url, headers, kwargs.get('html_save_dir', None))
     
     if not html_content:
