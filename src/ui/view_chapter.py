@@ -149,12 +149,14 @@ class ViewChapterUI(tk.Frame):
     def on_translation_complete(self):
         tk.messagebox.showinfo("Info", "Translation completed successfully.")
         
-        self.app.show_frame(
-            __import__('ui.view_chapter', fromlist=['ViewChapterUI']).ViewChapterUI,
-            novel=self.novel,
-            chapter=self.chapter,
-            storage_path=self.storage_path
-        )
+        # Only reload the current chapter if the frame is still active
+        if self.winfo_exists():
+            self.app.show_frame(
+                __import__('ui.view_chapter', fromlist=['ViewChapterUI']).ViewChapterUI,
+                novel=self.novel,
+                chapter=self.chapter,
+                storage_path=self.storage_path
+            )
 
     def go_previous(self):
         prev_chapter = self.chapter - 1

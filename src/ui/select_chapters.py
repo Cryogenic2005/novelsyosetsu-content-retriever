@@ -148,12 +148,15 @@ class SelectChaptersUI(tk.Frame):
     
     def on_translation_complete(self):
         tk.messagebox.showinfo("Info", "Translation completed successfully.")
-        self.app.show_frame(
-            __import__('ui.select_chapters', fromlist=['SelectChaptersUI']).SelectChaptersUI,
-            novel=self.novel,
-            storage_path=self.storage_path,
-            api_key=self.api_key
-        )
+        
+        # Only reload the chapter list if the frame is still active
+        if self.winfo_exists():
+            self.app.show_frame(
+                __import__('ui.select_chapters', fromlist=['SelectChaptersUI']).SelectChaptersUI,
+                novel=self.novel,
+                storage_path=self.storage_path,
+                api_key=self.api_key
+            )
 
     def go_back(self):
         self.app.show_frame(
