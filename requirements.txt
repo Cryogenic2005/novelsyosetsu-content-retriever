@@ -21,6 +21,8 @@ certifi==2025.6.15
     #   requests
 charset-normalizer==3.4.2
     # via requests
+colorama==0.4.6
+    # via pytest
 dotenv==0.9.9
     # via -r requirements.in
 google-auth==2.40.3
@@ -38,6 +40,12 @@ idna==3.10
     #   anyio
     #   httpx
     #   requests
+iniconfig==2.1.0
+    # via pytest
+packaging==25.0
+    # via pytest
+pluggy==1.6.0
+    # via pytest
 pyasn1==0.6.1
     # via
     #   pyasn1-modules
@@ -48,6 +56,10 @@ pydantic==2.11.7
     # via google-genai
 pydantic-core==2.33.2
     # via pydantic
+pygments==2.19.2
+    # via pytest
+pytest==8.4.1
+    # via -r requirements.in
 python-dotenv==1.1.0
     # via dotenv
 requests==2.32.4

@@ -2,3 +2,4 @@ beautifulsoup4
 dotenv
 requests
 google-genai
+pytest
