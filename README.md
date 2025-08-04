@@ -48,19 +48,5 @@ python main.py --novel_link <novel_link> --novel_name <novel_name> \
 python main.py --novel_link https://ncode.syosetu.com/examplenovelid/ --novel_name "Example Novel" --chapters 1 2 3 --cooldown_time 10 --verbosity 2
 ```
 
-## Directory Structure
-```
-chapters/
-  <novel_name>/
-    raw_content/           # Original Japanese text files
-    raw_html/              # Original HTML files
-    translation/           # Translated text files
-src/
-  gemini_client.py         # Handles Gemini API requests
-  retriever.py             # Retrieves and parses novel chapters
-  translator.py            # Manages translation workflow
-main.py                    # Entry point for CLI usage
-```
-
 ## License
 MIT License
